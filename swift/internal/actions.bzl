@@ -238,6 +238,8 @@ def run_toolchain_action(
     else:
         executable = tool_config.executable
 
+    tool_executable_args.add("-v")
+
     # If the tool configuration has any required arguments, add those first.
     if tool_config.args:
         args.add_all(tool_config.args)
