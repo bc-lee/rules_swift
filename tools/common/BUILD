@@ -33,7 +33,6 @@ cc_library(
     hdrs = ["process.h"],
     deps = [
         ":path_utils",
-        "@com_google_absl//absl/strings",
     ],
 )
 
