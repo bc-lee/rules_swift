@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/str_join.h"
 #include "tools/common/path_utils.h"
 
 extern char **environ;
@@ -144,6 +145,8 @@ void ExecProcess(const std::vector<std::string> &args) {
 
 int RunSubProcess(const std::vector<std::string> &args,
                   std::ostream *stderr_stream, bool stdout_to_stderr) {
+  *stderr_stream << "RunSubProcess args: [" << absl::StrJoin(args, ", ")
+                 << "]\n";
   std::vector<const char *> exec_argv = ConvertToCArgs(args);
 
   // Set up a pipe to redirect stderr from the child process so that we can

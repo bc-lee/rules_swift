@@ -42,6 +42,7 @@ cc_library(
         "//tools/common:path_utils",
         "//tools/common:temp_file",
         "@com_google_protobuf//:protobuf",
+        "@com_google_absl//absl/strings",
     ],
 )
 

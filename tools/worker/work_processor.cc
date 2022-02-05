@@ -23,6 +23,8 @@
 #include <sstream>
 #include <string>
 
+#include "absl/strings/str_join.h"
+#include "absl/strings/str_split.h"
 #include "tools/common/file_system.h"
 #include "tools/common/path_utils.h"
 #include "tools/common/temp_file.h"
@@ -58,7 +60,8 @@ void WorkProcessor::ProcessWorkRequest(
   // OS-specific and easy to get wrong), we unconditionally write the processed
   // arguments out to a params file.
   auto params_file = TempFile::Create("swiftc_params.XXXXXX");
-  std::ofstream params_file_stream(params_file->GetPath());
+  std::ostringstream params_file_stream;
+  std::ofstream real_params_file_stream(params_file->GetPath());
 
   OutputFileMap output_file_map;
   std::string output_file_map_path;
@@ -116,9 +119,16 @@ void WorkProcessor::ProcessWorkRequest(
   }
 
   processed_args.push_back("@" + params_file->GetPath());
-  params_file_stream.close();
+  params_file_stream.flush();
+  real_params_file_stream << params_file_stream.str();
+  real_params_file_stream.close();
 
   std::ostringstream stderr_stream;
+  stderr_stream << "swiftc params: ["
+                << absl::StrJoin(absl::StrSplit(params_file_stream.str(), '\n',
+                                                absl::SkipEmpty()),
+                                 ", ")
+                << "]\n";
 
   if (is_incremental) {
     for (const auto &expected_object_pair :
